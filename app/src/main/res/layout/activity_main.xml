@@ -17,7 +17,7 @@
         android:hint="Type a query for Github"
         android:textSize="22sp" />
 
-    <TextView
+    <Text
         android:id="@+id/search_url"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
