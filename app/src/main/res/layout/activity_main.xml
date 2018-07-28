@@ -1,41 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:paddingTop="16dp"
+    android:paddingLeft="@dimen/outer"
+    android:paddingRight="@dimen/outer"
+    android:paddingTop="@dimen/outer"
     tools:context=".MainActivity">
 
     <EditText
-        android:id="@+id/search_box"
+        android:id="@+id/search_query"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Type a query for Github"
-        android:textSize="22sp" />
+        android:hint="@string/hint_text"
+        android:inputType="text"
+        android:textSize="@dimen/size_text" />
 
-    <Text
+    <TextView
         android:id="@+id/search_url"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Enter a search query and your URL will show up here"
-        android:textSize="22sp" />
+        android:text="@string/hint_url"
+        android:textSize="@dimen/size_text" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp">
+        android:layout_marginTop="@dimen/outer">
 
         <TextView
             android:id="@+id/search_results"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="Search results will show up here"
-            android:textSize="18sp" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/hint_results"
+            android:textSize="@dimen/size_subtext" />
 
     </ScrollView>
 

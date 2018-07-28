@@ -1,14 +1,14 @@
 package com.chrissetiana.querypage;
 
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import java.io.IOException;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
@@ -22,15 +22,22 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        searchText = findViewById(R.id.search_box);
+        searchText = findViewById(R.id.search_query);
         searchURL = findViewById(R.id.search_url);
         searchResults = findViewById(R.id.search_results);
     }
 
-    void makeGithubearchQuery() {
+    void searchQuery() {
         String githubQuery = searchText.getText().toString();
-        URL githubSearchUrl = NetworkUtils.buildUrl(githubQuery);
-        searchURL.setText(githubSearchUrl.toString());
+        URL githubUrl = NetworkUtils.buildUrl(githubQuery);
+        searchURL.setText(githubUrl.toString());
+        String githubResults;
+        try {
+            githubResults = NetworkUtils.getResponseFromHttpUrl(githubUrl);
+            searchResults.setText(githubResults);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -45,7 +52,8 @@ public class MainActivity extends AppCompatActivity {
         if (menuItemSelected == R.id.action_search) {
             Context context = MainActivity.this;
             String message = "Search clicked";
-            makeGithubearchQuery();
+            searchQuery();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
