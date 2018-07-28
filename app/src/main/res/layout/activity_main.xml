@@ -25,18 +25,40 @@
         android:text="@string/hint_url"
         android:textSize="@dimen/size_text" />
 
-    <ScrollView
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/outer">
+        android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/search_results"
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/hint_results"
-            android:textSize="@dimen/size_subtext" />
+            android:layout_marginTop="@dimen/outer">
 
-    </ScrollView>
+            <TextView
+                android:id="@+id/search_results"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/hint_results"
+                android:textSize="@dimen/size_subtext" />
+
+        </ScrollView>
+
+        <TextView
+            android:id="@+id/search_err"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/outer"
+            android:text="@string/no_result"
+            android:textSize="@dimen/size_text"
+            android:visibility="invisible" />
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="@dimen/size_bar"
+            android:layout_height="@dimen/size_bar"
+            android:layout_gravity="center"
+            android:visibility="invisible" />
+
+    </FrameLayout>
 
 </LinearLayout>

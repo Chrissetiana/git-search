@@ -4,4 +4,6 @@
 
     <dimen name="size_text">22sp</dimen>
     <dimen name="size_subtext">18sp</dimen>
+
+    <dimen name="size_bar">42dp</dimen>
 </resources>
