@@ -1,4 +1,4 @@
-package com.chrissetiana.querypage;
+package com.chrissetiana.gitsearch;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
