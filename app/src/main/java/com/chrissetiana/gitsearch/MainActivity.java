@@ -32,39 +32,6 @@ public class MainActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progress_bar);
     }
 
-    void searchQuery() {
-        String githubQuery = textQuery.getText().toString();
-        URL githubUrl = NetworkUtils.buildUrl(githubQuery);
-        textUrl.setText(githubUrl.toString());
-        new GithubQueryTask().execute(githubUrl);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int menuItemSelected = item.getItemId();
-        if (menuItemSelected == R.id.action_search) {
-            searchQuery();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void showJsonData() {
-        textEmpty.setVisibility(View.INVISIBLE);
-        textResults.setVisibility(View.VISIBLE);
-    }
-
-    private void showErrorDisplay() {
-        textEmpty.setVisibility(View.VISIBLE);
-        textResults.setVisibility(View.INVISIBLE);
-    }
-
     private class GithubQueryTask extends AsyncTask<URL, Void, String> {
 
         @Override
@@ -96,5 +63,38 @@ public class MainActivity extends AppCompatActivity {
                 showErrorDisplay();
             }
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int menuItemSelected = item.getItemId();
+        if (menuItemSelected == R.id.action_search) {
+            searchQuery();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void searchQuery() {
+        String githubQuery = textQuery.getText().toString();
+        URL githubUrl = NetworkUtils.buildUrl(githubQuery);
+        textUrl.setText(githubUrl.toString());
+        new GithubQueryTask().execute(githubUrl);
+    }
+
+    private void showJsonData() {
+        textEmpty.setVisibility(View.INVISIBLE);
+        textResults.setVisibility(View.VISIBLE);
+    }
+
+    private void showErrorDisplay() {
+        textEmpty.setVisibility(View.VISIBLE);
+        textResults.setVisibility(View.INVISIBLE);
     }
 }
