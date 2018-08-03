@@ -32,39 +32,6 @@ public class MainActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progress_bar);
     }
 
-    private class GithubQueryTask extends AsyncTask<URL, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progressBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected String doInBackground(URL... urls) {
-            URL searchUrl = urls[0];
-            String githubResults = null;
-            try {
-                githubResults = NetworkUtils.getResponseFromHttpUrl(searchUrl);
-                textResults.setText(githubResults);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return githubResults;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            progressBar.setVisibility(View.INVISIBLE);
-
-            if (s != null && !s.equals("")) {
-                textResults.setText(s);
-            } else {
-                showErrorDisplay();
-            }
-        }
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
@@ -82,10 +49,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void searchQuery() {
-        String githubQuery = textQuery.getText().toString();
+        String githubQuery = textQuery.getText().toString().trim();
         URL githubUrl = NetworkUtils.buildUrl(githubQuery);
         textUrl.setText(githubUrl.toString());
-        new GithubQueryTask().execute(githubUrl);
+        new GithubAsyncTask().execute(githubUrl);
     }
 
     private void showJsonData() {
@@ -96,5 +63,39 @@ public class MainActivity extends AppCompatActivity {
     private void showErrorDisplay() {
         textEmpty.setVisibility(View.VISIBLE);
         textResults.setVisibility(View.INVISIBLE);
+    }
+
+    private class GithubAsyncTask extends AsyncTask<URL, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            textResults.setText("");
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected String doInBackground(URL... urls) {
+            URL searchUrl = urls[0];
+            String githubResults = null;
+            try {
+                githubResults = NetworkUtils.buildHttp(searchUrl);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return githubResults;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            progressBar.setVisibility(View.INVISIBLE);
+
+            if (s != null && !s.equals("")) {
+                showJsonData();
+                textResults.setText(s);
+            } else {
+                showErrorDisplay();
+            }
+        }
     }
 }

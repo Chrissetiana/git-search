@@ -1,6 +1,7 @@
 package com.chrissetiana.gitsearch;
 
 import android.net.Uri;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +15,6 @@ public class NetworkUtils {
     private final static String PARAM_QUERY = "q";
     private final static String PARAM_SORT = "sort";
     private final static String sortBy = "stars";
-    private String LOG_TAG = NetworkUtils.class.getSimpleName();
 
     public static URL buildUrl(String githubSearchQuery) {
         Uri uri = Uri.parse(BASE_URL)
@@ -30,10 +30,11 @@ public class NetworkUtils {
             e.printStackTrace();
         }
 
+        Log.d("Query: ", url.toString());
         return url;
     }
 
-    public static String getResponseFromHttpUrl(URL url) throws IOException {
+    public static String buildHttp(URL url) throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
         try {
