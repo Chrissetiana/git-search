@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Query Page</string>
+    <string name="app_name">Git Search</string>
 
     <string name="search">Search</string>
     <string name="hint_text">Type a query for Github</string>

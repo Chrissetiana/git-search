@@ -14,6 +14,8 @@ import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String SEARCH_URL = "query";
+    private static final String SEARCH_RESULT = "result";
     private EditText textQuery;
     private TextView textUrl;
     private TextView textResults;
@@ -30,6 +32,14 @@ public class MainActivity extends AppCompatActivity {
         textResults = findViewById(R.id.search_results);
         textEmpty = findViewById(R.id.search_err);
         progressBar = findViewById(R.id.progress_bar);
+
+        if (savedInstanceState != null) {
+            String url = savedInstanceState.getString(SEARCH_URL);
+            String result = savedInstanceState.getString(SEARCH_RESULT);
+
+            textUrl.setText(url);
+            textResults.setText(result);
+        }
     }
 
     @Override
@@ -46,6 +56,17 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        String url = textUrl.getText().toString().trim();
+        outState.putString(SEARCH_URL, url);
+
+        String result = textResults.getText().toString().trim();
+        outState.putString(SEARCH_RESULT, result);
     }
 
     private void searchQuery() {
