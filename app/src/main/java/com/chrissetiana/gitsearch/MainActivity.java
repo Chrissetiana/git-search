@@ -1,5 +1,6 @@
 package com.chrissetiana.gitsearch;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -71,10 +72,13 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<S
         return super.onOptionsItemSelected(item);
     }
 
+    @SuppressLint("StaticFieldLeak")
     @NonNull
     @Override
     public Loader<String> onCreateLoader(int id, final Bundle args) {
         return new AsyncTaskLoader<String>(this) {
+
+            String json;
 
             @Override
             protected void onStartLoading() {
@@ -83,8 +87,19 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<S
                 }
 
                 progressBar.setVisibility(View.VISIBLE);
+                // textResults.setText("");
 
-                forceLoad();
+                if (json != null) {
+                    deliverResult(json);
+                } else {
+                    forceLoad();
+                }
+            }
+
+            @Override
+            public void deliverResult(@Nullable String data) {
+                json = data;
+                super.deliverResult(data);
             }
 
             @Nullable
