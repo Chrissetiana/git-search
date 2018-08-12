@@ -1,10 +1,14 @@
 package com.chrissetiana.gitsearch;
 
-import android.app.LoaderManager;
-import android.content.Loader;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,10 +18,10 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.net.URL;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String> {
+public class MainActivity extends AppCompatActivity implements LoaderCallbacks<String> {
 
     private static final String SEARCH_URL = "query";
-    private static final String SEARCH_RESULT = "result";
+    private static final int LOADER_ID = 1;
     private EditText textQuery;
     private TextView textUrl;
     private TextView textResults;
@@ -37,11 +41,18 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         if (savedInstanceState != null) {
             String url = savedInstanceState.getString(SEARCH_URL);
-            String result = savedInstanceState.getString(SEARCH_RESULT);
-
             textUrl.setText(url);
-            textResults.setText(result);
         }
+
+        getSupportLoaderManager().initLoader(LOADER_ID, null, this);
+    }
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        String url = textUrl.getText().toString().trim();
+        outState.putString(SEARCH_URL, url);
     }
 
     @Override
@@ -60,71 +71,79 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         return super.onOptionsItemSelected(item);
     }
 
+    @NonNull
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
+    public Loader<String> onCreateLoader(int id, final Bundle args) {
+        return new AsyncTaskLoader<String>(this) {
 
-        String url = textUrl.getText().toString().trim();
-        outState.putString(SEARCH_URL, url);
+            @Override
+            protected void onStartLoading() {
+                if (args == null) {
+                    return;
+                }
 
-        String result = textResults.getText().toString().trim();
-        outState.putString(SEARCH_RESULT, result);
-    }
+                progressBar.setVisibility(View.VISIBLE);
 
-    @Override
-    public Loader<String> onCreateLoader(int id, Bundle args) {
-        return null;
-    }
-
-    @Override
-    public void onLoadFinished(Loader<String> loader, String data) {
-
-    }
-
-    @Override
-    public void onLoaderReset(Loader<String> loader) {
-
-    }
-
-    private class GithubAsyncTask extends AsyncTask<URL, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            textResults.setText("");
-            progressBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected String doInBackground(URL... urls) {
-            URL searchUrl = urls[0];
-            String githubResults = null;
-            try {
-                githubResults = NetworkUtils.buildHttp(searchUrl);
-            } catch (IOException e) {
-                e.printStackTrace();
+                forceLoad();
             }
-            return githubResults;
-        }
 
-        @Override
-        protected void onPostExecute(String s) {
-            progressBar.setVisibility(View.INVISIBLE);
+            @Nullable
+            @Override
+            public String loadInBackground() {
+                String urlString = args.getString(SEARCH_URL);
 
-            if (s != null && !s.equals("")) {
-                showJsonData();
-                textResults.setText(s);
-            } else {
-                showErrorDisplay();
+                if (urlString == null || TextUtils.isEmpty(urlString)) {
+                    return null;
+                }
+
+                try {
+                    URL url = new URL(urlString);
+                    return NetworkUtils.buildHttp(url);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
             }
+        };
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<String> loader, String data) {
+        progressBar.setVisibility(View.INVISIBLE);
+        if (data == null) {
+            showErrorDisplay();
+        } else {
+            textResults.setText(data);
+            showJsonData();
         }
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<String> loader) {
+
     }
 
     private void searchQuery() {
         String githubQuery = textQuery.getText().toString().trim();
+
+        if (TextUtils.isEmpty(githubQuery)) {
+            textUrl.setText(R.string.no_query);
+            return;
+        }
+
         URL githubUrl = NetworkUtils.buildUrl(githubQuery);
         textUrl.setText(githubUrl.toString());
-        new GithubAsyncTask().execute(githubUrl);
+
+        Bundle bundle = new Bundle();
+        bundle.putString(SEARCH_URL, githubUrl.toString());
+
+        LoaderManager loaderManager = getSupportLoaderManager();
+        Loader<String> githubLoader = loaderManager.getLoader(LOADER_ID);
+        if (githubLoader == null) {
+            loaderManager.initLoader(LOADER_ID, bundle, this);
+        } else {
+            loaderManager.restartLoader(LOADER_ID, bundle, this);
+        }
     }
 
     private void showJsonData() {
