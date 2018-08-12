@@ -1,5 +1,7 @@
 package com.chrissetiana.gitsearch;
 
+import android.app.LoaderManager;
+import android.content.Loader;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -12,7 +14,7 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.net.URL;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String> {
 
     private static final String SEARCH_URL = "query";
     private static final String SEARCH_RESULT = "result";
@@ -69,21 +71,19 @@ public class MainActivity extends AppCompatActivity {
         outState.putString(SEARCH_RESULT, result);
     }
 
-    private void searchQuery() {
-        String githubQuery = textQuery.getText().toString().trim();
-        URL githubUrl = NetworkUtils.buildUrl(githubQuery);
-        textUrl.setText(githubUrl.toString());
-        new GithubAsyncTask().execute(githubUrl);
+    @Override
+    public Loader<String> onCreateLoader(int id, Bundle args) {
+        return null;
     }
 
-    private void showJsonData() {
-        textEmpty.setVisibility(View.INVISIBLE);
-        textResults.setVisibility(View.VISIBLE);
+    @Override
+    public void onLoadFinished(Loader<String> loader, String data) {
+
     }
 
-    private void showErrorDisplay() {
-        textEmpty.setVisibility(View.VISIBLE);
-        textResults.setVisibility(View.INVISIBLE);
+    @Override
+    public void onLoaderReset(Loader<String> loader) {
+
     }
 
     private class GithubAsyncTask extends AsyncTask<URL, Void, String> {
@@ -118,5 +118,22 @@ public class MainActivity extends AppCompatActivity {
                 showErrorDisplay();
             }
         }
+    }
+
+    private void searchQuery() {
+        String githubQuery = textQuery.getText().toString().trim();
+        URL githubUrl = NetworkUtils.buildUrl(githubQuery);
+        textUrl.setText(githubUrl.toString());
+        new GithubAsyncTask().execute(githubUrl);
+    }
+
+    private void showJsonData() {
+        textEmpty.setVisibility(View.INVISIBLE);
+        textResults.setVisibility(View.VISIBLE);
+    }
+
+    private void showErrorDisplay() {
+        textEmpty.setVisibility(View.VISIBLE);
+        textResults.setVisibility(View.INVISIBLE);
     }
 }
